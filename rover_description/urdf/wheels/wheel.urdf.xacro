@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<!-- # MIT License
+
+# Copyright (c) 2023 Miguel Ángel González Santamarta
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE. -->
+<robot name="body" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="wheel_width" value="0.100" />
+    <xacro:property name="wheel_radius" value="0.060" />
+    <xacro:property name="wheel_mass" value="0.25" />
+    <xacro:include filename="$(find rover_description)/urdf/inertials.xacro"/>
+    <!-- link -->
+    <xacro:macro name="wheel_link" params="lon_label lat_label reflect">
+        <link name="${lon_label}_${lat_label}_wheel_link">
+            <visual>
+                <origin rpy="${reflect * math_pi_over_2} 0 0" xyz="0 0 0" />
+                <geometry>
+                    <mesh filename="package://rover_description/meshes/wheels/wheel_asm.stl" />
+                </geometry>
+                <material name="black" />
+            </visual>
+            <collision>
+                <origin rpy="${reflect * math_pi_over_2} 0 0" xyz="0 0 0" />
+                <geometry>
+                    <cylinder length="${wheel_width}" radius="${wheel_radius}" />
+                    <!-- <mesh filename="package://rover_description/meshes/wheels/wheel_asm.stl" /> -->
+                </geometry>
+            </collision>
+            <xacro:solid_cylinder_inertial
+                rpy="0 0 0" xyz="0 0 0"
+                mass="${wheel_mass}"
+                radius="${wheel_radius}" length="${wheel_width}" />
+        </link>
+        <gazebo reference="${lon_label}_${lat_label}_wheel_link">
+            <material>Gazebo/DarkGray</material>
+            <mu1>1.0</mu1>
+            <mu2>1.0</mu2>
+            <kp>10000000</kp>
+            <kd>1.0</kd>
+            <fdir1 value="1 0 0"/>
+        </gazebo>
+    </xacro:macro>
+    <!-- corner wheel joint -->
+    <xacro:macro name="corner_wheel_joint" params="lon_label lat_label reflect">
+        <joint name="${lon_label}_${lat_label}_wheel_joint" type="continuous">
+            <origin rpy="0 0 0" xyz="0 0 -0.132"/>
+            <axis xyz="0 1 0" />
+            <parent link="${lon_label}_${lat_label}_corner_link" />
+            <child link="${lon_label}_${lat_label}_wheel_link" />
+            <limit effort="1000.0" lower="-3.14159" upper="3.14159" velocity="30"/>
+            <dynamics damping="0.0" friction="0.0"/>
+        </joint>
+        <gazebo reference="${lon_label}_${lat_label}_wheel_joint">
+            <provideFeedback>true</provideFeedback>
+        </gazebo>
+    </xacro:macro>
+    <!-- mid wheel joint -->
+    <xacro:macro name="mid_wheel_joint" params="lat_label reflect">
+        <joint name="mid_${lat_label}_wheel_joint" type="continuous">
+            <origin rpy="0 0 0" xyz="0.1063 ${reflect * 0.0929} -0.0959"/>
+            <axis xyz="0 1 0" />
+            <parent link="${lat_label}_bogie_link" />
+            <child link="mid_${lat_label}_wheel_link" />
+            <limit effort="1000.0" lower="-3.14159" upper="3.14159" velocity="30"/>
+            <dynamics damping="0.0" friction="0.0"/>
+        </joint>
+        <gazebo reference="mid_${lat_label}_wheel_joint">
+            <provideFeedback>true</provideFeedback>
+        </gazebo>
+    </xacro:macro>
+</robot>

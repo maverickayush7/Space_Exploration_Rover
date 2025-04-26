@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rover_localization</name>
+  <version>1.1.0</version>
+  <description>Localization package</description>
+  <maintainer email="0001ayushkumar@gmail.com">Ayush Kumar</maintainer>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rtabmap</depend>
+  <depend>rtabmap_ros</depend>
+  <depend>robot_localization</depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

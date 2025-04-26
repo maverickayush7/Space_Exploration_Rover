@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<!-- # MIT License
+
+# Copyright (c) 2023 Miguel Ángel González Santamarta
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE. -->
+<robot name="differential" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="differential_box_length" value="0.300" />
+    <xacro:property name="differential_box_width" value="0.055" />
+    <xacro:property name="differential_box_depth" value="0.055" />
+    <xacro:property name="differential_box_mass" value="0.1" />
+    <xacro:include filename="$(find rover_description)/urdf/inertials.xacro"/>
+    <xacro:macro name="differential" params="parent">
+        <link name="diff_brace_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0" />
+                <!-- <origin rpy="0 0 ${math_pi_over_2}" xyz="0 0 0" /> -->
+                <geometry>
+                    <mesh filename="package://rover_description/meshes/bases/differential.stl" />
+                    <!-- <box size="0.200 0.015 0.015"/> -->
+                </geometry>
+                <material name="white" />
+            </visual>
+            <collision>
+                <origin rpy="0 0 ${math_pi_over_2}" xyz="0 0 0" />
+                <geometry>
+                    <box size="${differential_box_length} ${differential_box_width} ${differential_box_depth}"/>
+                </geometry>
+            </collision>
+            <xacro:solid_cuboid_inertial 
+                rpy="0 0 ${math_pi_over_2}" xyz="0 0 0"
+                mass="${differential_box_mass}"
+                x="${differential_box_length}" y="${differential_box_width}" z="${differential_box_depth}" />
+        </link>
+        <gazebo reference="diff_brace_link">
+            <material>Gazebo/White</material>
+        </gazebo>
+        <joint name="diff_brace_joint" type="revolute">
+            <origin rpy="0 0 0" xyz="0 0 0.0681"/>
+            <axis xyz="0 0 1" />
+            <limit 
+                lower="${-math_pi_over_4}"
+                upper="${math_pi_over_4}"
+                effort="100.0"
+                velocity="30.0" />
+            <parent link="${parent}" />
+            <child link="diff_brace_link" />
+        </joint>
+        <gazebo reference="diff_brace_joint">
+            <provideFeedback>true</provideFeedback>
+            <implicitSpringDamper>true</implicitSpringDamper>
+        </gazebo>
+    </xacro:macro>
+</robot>
