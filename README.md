@@ -1,5 +1,5 @@
 # Space_Exploration_Rover
-Space Exploration Rover is an open-source robotics project designed to simulate and develop planetary rover autonomy using ROS 2 and Gazebo. The project provides a modular and extensible framework for simulating a six-wheeled space rover in diverse extraterrestrial environments such as the Moon and Mars - like terrains.
+Space Exploration Rover is a robotics project designed to simulate and develop planetary rover autonomy using ROS 2 and Gazebo. The project provides a modular and extensible framework for simulating a six-wheeled space rover in diverse extraterrestrial environments such as the Moon and Mars - like terrains.
 
 ## Table of Contents
 
